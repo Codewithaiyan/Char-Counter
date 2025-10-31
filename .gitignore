@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.env
+
+# Node / Frontend
+node_modules/
+build/
+dist/
+npm-debug.log
+yarn-error.log
+
+# Docker
+*.tar
+
+# OS / Misc
+.DS_Store
+*.log
+
+# VS Code
+.vscode/
+
+# Kubernetes
+*.yaml~
