@@ -41,31 +41,28 @@ Both are Dockerized and deployed as independent services on Kubernetes — commu
 This design mimics real-world DevOps workflows, focusing on containerization, deployment automation, and scalability.
 
 🏗️ Architecture
-            +---------------------+
-            |   Frontend (HTML)   |
-            |---------------------|
-            | index.html + JS     |
-            | Sends POST to /api  |
-            +----------+----------+
-                       |
-                       |  REST API Request
-                       v
-            +---------------------+
-            |  Backend (Flask)    |
-            |---------------------|
-            | /count endpoint     |
-            | Returns JSON result |
-            +----------+----------+
-                       |
-                       |  Docker Networking
-                       v
-            +---------------------+
-            |   Kubernetes Cluster |
-            |---------------------|
-            | Frontend Pod        |
-            | Backend Pod         |
-            | NodePort Services   |
-            +---------------------+
+
+┌─────────────────────────┐
+│       Frontend          │
+│  (HTML + CSS + JS)      │
+│  Sends POST → /api      │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│       Backend (Flask)   │
+│  /count endpoint         │
+│  Returns JSON response   │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│  Docker Networking      │
+│  Kubernetes Cluster      │
+│  Frontend & Backend Pods │
+│  NodePort Service        │
+└─────────────────────────┘
+
 
 📂 Project Structure
 char-counter/
