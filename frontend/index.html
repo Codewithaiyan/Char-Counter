@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Counter Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .error {
+            background: #fee;
+            border-left-color: #f88;
+            color: #c33;
+        }
+
+        .count-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Character Counter</h1>
+        
+        <div class="input-group">
+            <label for="nameInput">Enter Your Name:</label>
+            <input 
+                type="text" 
+                id="nameInput" 
+                placeholder="Type your name..."
+                onkeypress="if(event.key === 'Enter') countCharacters()"
+            >
+        </div>
+
+        <button id="countBtn" onclick="countCharacters()">Count Characters</button>
+
+        <div id="result" class="result">
+            <div><strong>Input:</strong> <span id="resultName">-</span></div>
+            <div><strong>Character Count:</strong> <span class="count-badge" id="resultCount">0</span></div>
+            <div id="resultMessage" style="margin-top: 10px; color: #666;">-</div>
+        </div>
+    </div>
+
+    <script>
+        // Change this to your backend endpoint:
+        const API_URL = "http://34.224.32.226:30084/count";
+
+        async function countCharacters() {
+            const nameInput = document.getElementById('nameInput');
+            const name = nameInput.value.trim();
+            const resultDiv = document.getElementById('result');
+            const countBtn = document.getElementById('countBtn');
+
+            if (!name) {
+                resultDiv.innerHTML = '<div style="color: #c33; font-size: 14px;">⚠️ Please enter a name first</div>';
+                resultDiv.classList.add('show', 'error');
+                return;
+            }
+
+            countBtn.disabled = true;
+            countBtn.textContent = '⏳ Counting...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    resultDiv.innerHTML = `<div style="color: #c33;">❌ ${data.error}</div>`;
+                    resultDiv.classList.add('show', 'error');
+                } else {
+                    document.getElementById('resultName').textContent = data.name;
+                    document.getElementById('resultCount').textContent = data.count;
+                    document.getElementById('resultMessage').textContent = data.message || 'Character count successful!';
+                    resultDiv.classList.add('show');
+                    resultDiv.classList.remove('error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: #c33;">❌ Error: ${error.message}</div>`;
+                resultDiv.classList.add('show', 'error');
+            } finally {
+                countBtn.disabled = false;
+                countBtn.textContent = 'Count Characters';
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: char-counter-frontend
+  labels:
+    app: char-counter-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: char-counter-frontend
+  template:
+    metadata:
+      labels:
+        app: char-counter-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: codewithaiyan/char-counter-frontend:latest
+        ports:
+        - containerPort: 80
